@@ -2,8 +2,13 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const auth = require("../config/firebaseAdmin");
 
+console.log("✅ authRoutes loaded");
+
 const router = express.Router();
 
+// =====================
+// Generate JWT
+// =====================
 router.post("/jwt", async (req, res) => {
   try {
     const { token } = req.body;
@@ -52,7 +57,12 @@ router.post("/jwt", async (req, res) => {
   }
 });
 
+// =====================
+// Logout
+// =====================
 router.post("/logout", (req, res) => {
+  console.log("🔥 Logout route hit");
+
   res.clearCookie("token", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
@@ -62,7 +72,7 @@ router.post("/logout", (req, res) => {
         : "lax",
   });
 
-  res.send({
+  res.status(200).send({
     success: true,
     message: "Logout Success",
   });
