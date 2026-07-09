@@ -167,10 +167,7 @@ const deleteRecipe = async (req, res) => {
     });
   }
 };
-// ==============================
-// Add Recipe
-// ==============================
-// ==============================
+
 // Add Recipe
 // ==============================
 const addRecipe = async (req, res) => {
@@ -261,6 +258,33 @@ const getMyRecipes = async (req, res) => {
     });
   }
 };
+// ==============================
+// Get Featured Recipes
+// ==============================
+const getFeaturedRecipes = async (req, res) => {
+  try {
+    const db = await connectDB();
+
+    const recipes = await db
+      .collection("recipes")
+      .find({
+        isFeatured: true,
+      })
+      .sort({
+        updatedAt: -1,
+      })
+      .limit(6)
+      .toArray();
+
+    res.send(recipes);
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).send({
+      message: "Failed to load featured recipes",
+    });
+  }
+};
 
 module.exports = {
   getAllRecipes,
@@ -270,5 +294,6 @@ module.exports = {
   deleteRecipe,
   addRecipe,
   getMyRecipes,
+getFeaturedRecipes
 };
   

@@ -90,9 +90,49 @@ const dismissReport = async (req, res) => {
     });
   }
 };
+// =============================
+// Delete Reported Recipe
+// =============================
+const deleteReportedRecipe = async (req, res) => {
+  try {
+    const db = await connectDB();
+
+    const report = await db.collection("reports").findOne({
+      _id: new ObjectId(req.params.id),
+    });
+
+    if (!report) {
+      return res.status(404).send({
+        message: "Report not found",
+      });
+    }
+
+    // Delete recipe
+    await db.collection("recipes").deleteOne({
+      _id: new ObjectId(report.recipeId),
+    });
+
+    // Delete all reports for that recipe
+    await db.collection("reports").deleteMany({
+      recipeId: report.recipeId,
+    });
+
+    res.send({
+      success: true,
+      message: "Recipe removed successfully",
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).send({
+      message: "Failed to remove recipe",
+    });
+  }
+};
 
 module.exports = {
   addReport,
   getReports,
   dismissReport,
+  deleteReportedRecipe
 };

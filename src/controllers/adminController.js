@@ -285,6 +285,49 @@ const getAdminStats = async (req, res) => {
     });
   }
 };
+// =============================
+// Feature Recipe
+// =============================
+const { ObjectId } = require("mongodb");
+
+const featureRecipe = async (req, res) => {
+  try {
+    const db = await connectDB();
+
+    const recipe = await db.collection("recipes").findOne({
+      _id: new ObjectId(req.params.id),
+    });
+
+    if (!recipe) {
+      return res.status(404).send({
+        message: "Recipe not found",
+      });
+    }
+
+    const result = await db.collection("recipes").updateOne(
+      {
+        _id: new ObjectId(req.params.id),
+      },
+      {
+        $set: {
+          isFeatured: !recipe.isFeatured,
+        },
+      }
+    );
+
+    res.send({
+      success: true,
+      featured: !recipe.isFeatured,
+      result,
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).send({
+      message: "Failed",
+    });
+  }
+};
 
 // =========================
 // Block / Unblock User
@@ -331,4 +374,5 @@ module.exports = {
   approvePremiumRequest,
   rejectPremiumRequest,
   getAdminStats,
+  featureRecipe,
 };

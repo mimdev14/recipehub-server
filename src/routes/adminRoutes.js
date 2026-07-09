@@ -12,6 +12,7 @@ deleteReport,
   approvePremiumRequest,
   rejectPremiumRequest,
   getAdminStats,
+  featureRecipe,
 } = require("../controllers/adminController");
 
 const verifyToken = require("../middlewares/verifyToken");
@@ -87,6 +88,11 @@ router.get(
   "/stats",
   verifyToken,
   getAdminStats
+);
+router.patch(
+  "/recipes/feature/:id",
+  verifyToken,
+  featureRecipe
 );
 
 module.exports = router;
