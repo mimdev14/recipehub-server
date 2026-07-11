@@ -1,6 +1,8 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${encodeURIComponent(process.env.DB_PASS)}@cluster0.dmalja2.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${encodeURIComponent(
+  process.env.DB_PASS
+)}@cluster0.dmalja2.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 const client = new MongoClient(uri, {
   serverApi: {
@@ -10,18 +12,18 @@ const client = new MongoClient(uri, {
   },
 });
 
+let db = null;
+
 async function connectDB() {
-  try {
-    await client.connect();
+  if (db) return db;
 
-    console.log("✅ MongoDB Connected Successfully");
+  await client.connect();
 
-    return client.db("recipehub");
-  } catch (error) {
-    console.error("❌ MongoDB Connection Failed");
-    console.error(error);
-    process.exit(1);
-  }
+  console.log("✅ MongoDB Connected");
+
+  db = client.db("recipehub");
+
+  return db;
 }
 
 module.exports = connectDB;
