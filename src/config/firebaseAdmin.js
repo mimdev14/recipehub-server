@@ -3,7 +3,11 @@ const { getAuth } = require("firebase-admin/auth");
 
 let serviceAccount;
 
-if (process.env.VERCEL) {
+if (
+  process.env.FIREBASE_PROJECT_ID &&
+  process.env.FIREBASE_CLIENT_EMAIL &&
+  process.env.FIREBASE_PRIVATE_KEY
+) {
   serviceAccount = {
     projectId: process.env.FIREBASE_PROJECT_ID,
     clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
