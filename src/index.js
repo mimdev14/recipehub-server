@@ -20,17 +20,25 @@ const recipeAccessRoutes = require("./routes/recipeAccessRoutes");
 
 const app = express();
 
+// =======================
 // Connect MongoDB
-connectDB().catch((error) => {
-  console.error("MongoDB Connection Failed:", error);
-});
+// =======================
+connectDB()
+  .then(() => {
+    console.log("✅ Database Connected");
+  })
+  .catch((error) => {
+    console.error("❌ MongoDB Connection Failed:", error);
+  });
 
+// =======================
 // Middleware
+// =======================
 app.use(
   cors({
     origin: [
       "http://localhost:3000",
-      // Add your Vercel frontend URL here later
+      process.env.CLIENT_URL, // Railway/Vercel frontend URL
     ],
     credentials: true,
   })
@@ -39,7 +47,9 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
+// =======================
 // Routes
+// =======================
 app.use("/api/auth", authRoutes);
 app.use("/api/recipes", recipeRoutes);
 app.use("/api/users", userRoutes);
@@ -53,20 +63,38 @@ app.use("/api/recipe-access", recipeAccessRoutes);
 app.use("/api/stripe", stripeRoutes);
 app.use("/api/recipe-purchase", recipePurchaseRoutes);
 
+// =======================
+// Root Route
+// =======================
 app.get("/", (req, res) => {
-  res.send("RecipeHub Server Running...");
+  res.status(200).send("🚀 RecipeHub Server Running...");
 });
 
-// For local development only
-if (process.env.NODE_ENV !== "production") {
-  const port = process.env.PORT || 5000;
-
-  app.listen(port, () => {
-    console.log(`🚀 Server running on port ${port}`);
+// =======================
+// Health Check
+// =======================
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Server is healthy",
   });
-}
+});
 
+// =======================
+// 404 Handler
+// =======================
+app.use("*", (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: "Route not found",
+  });
+});
 
-app.get("/", (req, res) => {
-  res.send("RecipeHub Server Running");
+// =======================
+// Start Server
+// =======================
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 });
