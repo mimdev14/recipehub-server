@@ -66,5 +66,7 @@ if (process.env.NODE_ENV !== "production") {
   });
 }
 
-// Export for Vercel
-module.exports = app;
+
+app.get("/", (req, res) => {
+  res.send("RecipeHub Server Running");
+});
