@@ -33,8 +33,8 @@ router.post("/", async (req, res) => {
     // Send JWT as HttpOnly Cookie
     res.cookie("token", jwtToken, {
       httpOnly: true,
-      secure: false, // change to true after deployment with HTTPS
-      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     });
 
     res.send({

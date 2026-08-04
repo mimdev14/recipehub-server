@@ -19,6 +19,11 @@ const recipePurchaseRoutes = require("./routes/recipePurchaseRoutes");
 const recipeAccessRoutes = require("./routes/recipeAccessRoutes");
 
 const app = express();
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  process.env.FRONTEND_URL,
+  "http://localhost:3000",
+].filter(Boolean);
 
 // Connect MongoDB
 connectDB().catch((error) => {
@@ -28,10 +33,7 @@ connectDB().catch((error) => {
 // Middleware
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",
-      // Add your Vercel frontend URL here later
-    ],
+    origin: allowedOrigins,
     credentials: true,
   })
 );
@@ -66,7 +68,4 @@ if (process.env.NODE_ENV !== "production") {
   });
 }
 
-
-app.get("/", (req, res) => {
-  res.send("RecipeHub Server Running");
-});
+module.exports = app;
